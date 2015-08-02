@@ -1,0 +1,32 @@
+#!/bin/bash
+Usage ()
+        {
+        echo
+        echo "                          Incorrect usage"
+        echo "				Useage : width <file> <location of peak>"
+	echo "				Creates a file PSR_Name.wid column 1 has freq column 2 has width"
+	echo "				Uses a python script width.py"
+        echo "				devansh@iisertvm.ac.in"
+        }
+if test $# -lt 1
+        then
+        Usage
+        exit -1
+fi
+#rm -rf *.cwid
+for prof in `ls -1 ${1}`
+do
+	rm -rf *.mba junk?
+	cat ${prof} | grep "#" > head.mba
+	cat ${prof} | grep -v "#" > data.mba
+	echo "copying temporary files"
+	cp -rp ../scripts/width_selective.py `pwd`
+	echo "${prof}" | cut -d_ -f 2 > junk1
+	echo "calculating width for ${prof}"
+	python width_selective.py $2 > junk2
+	touch `echo "${prof}" | cut -d_ -f 1`.wid
+	paste junk1 junk2 >> `echo "${prof}" | cut -d_ -f 1`.cwid
+	echo "removing temporary files"
+	rm -rf width_selective.py *.mba junk?
+	echo "done!"
+done

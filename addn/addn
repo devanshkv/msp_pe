@@ -1,0 +1,48 @@
+#!/bin/bash
+Usage ()
+        {
+        echo
+        echo "                          Incorrect usage : Found Less arguments."
+        echo "Useage : addn 	<number of files> <files>"
+        echo
+        echo 
+        }
+if test $# -lt 1
+        then
+        Usage
+        exit -1
+fi
+rm -rf f? Head? junk? s? rack
+i=0
+x=0
+for filename in $@
+	do
+	rm -rf s?
+	echo $filename
+	cat $filename | grep "#" >>Head$i
+	cat $filename | grep -v "#" >> f$i
+	i=$(echo "$i + 1" | bc -l)
+	cat $filename | grep -v "#" |  awk '{print $1}'>s0
+	cat $filename | grep -v "#" |  awk '{print $2}'>s1
+	done
+
+cat f0 | awk -v var=$i-1 '{print $3/var}' > junk1
+cat  Head0 > blah
+
+for ((x=1;x<i;x++))
+	do
+	awk -v var=$i '{print $3/var}' f$x > junk2
+	cat Head$x > blah1
+	paste blah blah1 > blah2
+	mv blah2 blah
+	paste junk1 junk2 | awk '{printf"%.8f\n",$1+$2}'> junk3
+	mv junk3 junk1
+done
+#name= echo "`echo "$1" | cut -d_ -f 1`_`echo "$1" | cut -d_ -f 2`_`echo \"$1\" | cut -d_ -f 3`_NOMJD_ddmmmyy_added.bestprof_add_phs"
+paste s0 s1 junk1 >> blah
+echo "rm -rf `echo \"$1\" | cut -d_ -f 1`_`echo \"$1\" | cut -d_ -f 2`_`echo \"$1\" | cut -d_ -f 3`_NOMJD_ddmmmyy_added.bestprof_add_phs" >> rack
+echo "mv blah `echo \"$1\" | cut -d_ -f 1`_`echo \"$1\" | cut -d_ -f 2`_`echo \"$1\" | cut -d_ -f 3`_NOMJD_ddmmmyy_added.bestprof_add_phs" >> rack
+chmod +x rack
+./rack
+rm -rf f? Head? junk? s? rack blah*
+#../home/devansh/Pulsars/scripts/all_scripts/

@@ -1,0 +1,69 @@
+#!/bin/bash
+# This script is to convert, for profile files with two columns where first has bins and second has the counts, bins to phase for all specified files within pwd and generates filename_phs for each.
+
+Usage ()
+        {
+        echo
+        echo "  Incorrect usage: Found Less arguments."
+        echo "  This script is to convert, for profile files with two columns where first has bins and second"
+        echo "  has the counts, bins to phase for all specified files within pwd and generates filename_phs for each."
+        echo "  If 'c' is passed as second argument then the points are assigned to centeres of bins rather than left edges."
+        echo
+        echo "  USAGE : executable <\"filename(s)\"> {c}"
+        echo "  Exmpl : executable \"*325*bestprof\" c"
+        echo
+        #echo "  Developement Area : ujjwal@kanya.ncra.tifr.res.in:/nasdata1/astro/pulsar/users/ujjwal/My_Codes/Shell_scripts/Bin2Phs"
+        #echo "  Located for use at: ujjwal@kanya.ncra.tifr.res.in:/nasdata1/astro/pulsar/users/ujjwal/My_Codes/Shell_scripts/Bin2Phs"
+        echo
+        }
+
+if test $# -lt 1
+        then
+	Usage
+	exit -1
+fi
+
+bincent=0
+if [[ ! -z  ${2} ]] && [[ "${2}" == "c" ]]
+        then
+        bincent=1 
+fi
+rm -rf junk*
+echo
+junk=$(mktemp)
+junk1=$(mktemp)
+junk2=$(mktemp)
+
+ls -1 ${1} >> junk
+
+for filename in `cat junk` 
+    do
+    rm -rf ${filename}_phs
+
+    echo "Doing ${filename}"
+
+    cat "${filename}" | grep -v "#" >> junk1
+    cat "${filename}" | grep    "#" >> ${filename}_phs
+
+    Nbins=$(cat "${filename}" | grep -v "#" | wc -l  | awk '{printf"%d\n",$1}' )
+
+    for ((k=0; k<$Nbins ; k++))
+        do
+	if [[ "$bincent" -eq 1 ]]
+		then
+        	Phase=$(echo "1.0*($k)/($Nbins) + 1.0/(2.0*($Nbins)) " | bc -l | awk '{printf"%.6f",$1}')
+	else
+        	Phase=$(echo "1.0*($k)/($Nbins) " | bc -l | awk '{printf"%.6f",$1}')
+	fi
+        echo "$Phase"  >> junk2 
+    done
+
+    paste junk2 junk1 >> ${filename}_phs
+done
+
+rm -rf plotall_phs.gnu; ls -1 *_phs | awk '{printf("pl \"%s\" u 1:3 w lp ; pause -1\n",$1)}' > plotall_phs.gnu
+
+echo
+echo "All files done!! Also plotall_phs.gnu generated, now from within gnuplot:"
+echo "load 'plotall_phs.gnu'"
+echo
