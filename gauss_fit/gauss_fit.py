@@ -2,15 +2,12 @@
 
 #########################################################
 #                                                       #
-#                  Separation error                     #
+#                  gaussian fitting                     #
 #                Written by : Devansh Agarwal           #
 #                devansh@iisertvm.ac.in                 #
 #                                                       #
 #########################################################
-'''
-Useage : 
-./error_s.py "<filename>" <no_of_windows> <on_bin> <off_bin>
-'''
+
 #import libaries
 from scipy.optimize import curve_fit
 import numpy as np
@@ -24,10 +21,6 @@ def redchisqg(ydata,ymod,deg,sd):
           chisq=np.sum( ((ydata-ymod)/sd)**2 )
      nu=len(ydata)-1-deg
      return chisq/nu
-
-
-
-
 
 #lets read the files!
 f= open(sys.argv[1],'r')
@@ -56,6 +49,7 @@ def func(x, *params):
 
 comp = int(input("Number of components to be fit: ")) - 1
 
+#intial guess
 guess = [0.3352, 0.4982, 0.05026]#, 0.4003, 0.6865, 0.096460, 0.5948, 0.8761, 0.0801]
 
 for i in range(comp):
@@ -81,7 +75,7 @@ for i in range(comp+1):
     #print ctr, err[j], amp, err[j+1],wid*360*1.66510922232, err[j+2]*360*1.66510922232
     j=j+3
     plt.plot(x,amp * np.exp( -((x - ctr)/wid)**2))
-print 360*(popt[0]-popt[3]), 360*(popt[3]-popt[6]), 360*(popt[0]-popt[6])
+print 360*(poddpt[0]-popt[3]), 360*(popt[3]-popt[6]), 360*(popt[0]-popt[6])
 plt.plot(x,y, 'm.-',label='profile')
 plt.ylabel("Intensity")
 plt.plot(x, fit , 'k-',label='fit')
