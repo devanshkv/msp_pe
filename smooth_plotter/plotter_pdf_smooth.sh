@@ -35,7 +35,7 @@ for prof in `ls -1 ${1}`
          freq=$(echo "$prof" | cut -d_ -f 2)
 			   period=$(grep ${psr_name} /home/devansh/Copy/Pulsars/data/Database/period.dat | awk '{print $2}')
 			   dm=$(echo "${prof}" | cut -d_ -f 3)
-         run_avg_file=$(locate run.avg | grep $psr_name | head -n 1)
+         run_avg_file=$(find /home/devansh/Copy/ -name "run.avg" | grep $psr_name | head -n 1)
          smooth_widow=$(grep "_$freq" $run_avg_file | awk '{print $2}')
          echo "Plotting PSR : $psr_name at requency : $freq, DM : $dm, Period : $period"
          dm_counter=$(echo "${dm_counter} + 1" | bc )

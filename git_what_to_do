@@ -1,2 +1,3 @@
-git commit -am "3rd Aug put-up"
+git add *
+git commit -am "17th Aug put-up"
 git push origin master

@@ -13,7 +13,7 @@ if test $# -lt 1
         Usage
         exit -1
 fi
-/home/devansh/Desktop/backup/Dropbox/27_046/scripts/centprof_latest.sh -i $1 -b 0 -n 0 -c 1 -B 1 -C 3 -R 1
+/home/devansh/Copy/git/msp_pe/center_and_rotate/centprof_latest.sh -i $1 -b 0 -n 0 -c 1 -B 1 -C 3 -R 1
 rm -rf head
 cat $1_cn | grep  "#" >> head
 cat $1_cn | grep -v "#" |  awk '{printf"%.8f\t%.8f\t%.8f\n",$1,$2,$4}' >> head

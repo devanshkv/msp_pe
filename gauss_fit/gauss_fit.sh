@@ -28,18 +28,17 @@ IFS='
 '
 for line in $(<${1})
 do
-	IFS="$old"	
+	IFS="$old"
 	prof=$(echo "${line}" | awk '{print $1}')
 	cat ${prof} | grep "#" > head.sep
   std=$(cat head.sep | grep "std" | awk '{print $3}' | tail -n 1)
   cat ${prof} | grep -v "#" > data.sep
-	echo $std
   echo "fitting for ${prof}"
-	#cp /home/devansh/Dropbox/db_mean_0/Database/scripts/error_s.py .
-	./gauss_fit.py data.sep $std
-	#name=$(echo "${prof}" |  cut -d. -f1)
-	#echo "${name}"
-	#cat head.sep data > ${name}_off_mean_0.bestprof_phs
+  cp -np /home/devansh/Copy/git/msp_pe/gauss_fit/gauss_fit.py .
+  ./gauss_fit.py data.sep $std
+	name=$(echo "${prof}" |  cut -d_ -f1)
+  freq=$(echo ${prof} | cut -d_  -f2)
+  mv multipage.pdf ${name}_$freq.pdf
 	rm -rf *.sep data #*.py
-	echo "Done!"
 done
+	echo "Done!"

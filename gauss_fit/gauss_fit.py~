@@ -16,19 +16,7 @@ from scipy.optimize import curve_fit
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
-def redchisqg(ydata,ymod,deg,sd):
-     # Chi-square statistic
-     if sd==None:
-          chisq=np.sum((ydata-ymod)**2)
-     else:
-          chisq=np.sum( ((ydata-ymod)/sd)**2 )
-     nu=len(ydata)-1-deg
-     return chisq/nu
-
-
-
-
-
+import redchisq
 #lets read the files!
 f= open(sys.argv[1],'r')
 x = []
@@ -42,8 +30,8 @@ for line in f:
 f.close()
 
 
-plt.plot(x,y,'m-')
-plt.show()
+#plt.plot(x,y,'m-')
+#plt.show()
 
 def func(x, *params):
     y = np.zeros_like(x)
@@ -65,7 +53,7 @@ popt, pcov = curve_fit(func, x, y, p0=guess)
 #print popt
 err = np.sqrt(np.diag(pcov))
 fit = func(x, *popt)
-print redchisqg(y,fit,3*(comp+1),float(sys.argv[2]))
+print redchisq.redchisqg(y,fit,3*(comp+1),float(sys.argv[2]))
 #print popt
 
 j=0
